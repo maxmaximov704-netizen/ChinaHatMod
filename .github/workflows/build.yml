@@ -1,1 +1,32 @@
+name: Build Mod
 
+# запускать на каждый push в репозиторий
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Клонируем репозиторий
+    - uses: actions/checkout@v2
+
+    # Устанавливаем Java (8 — для Forge 1.16.5)
+    - name: Setup Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+
+    # Компилируем все .java файлы
+    - name: Build jar
+      run: |
+        mkdir build
+        javac -d build src/main/java/example/*.java
+        jar cf ChinaHatMod.jar -C build .
+
+    # Загружаем собранный jar как артефакт
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ChinaHatMod
+        path: ChinaHatMod.jar
